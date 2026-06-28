@@ -1,0 +1,92 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* ── Backgrounds ─────────────────────────────── */
+  --bg:       #F4F3EE;   /* warm cream — matches Crextio vibe */
+  --surface:  #FFFFFF;
+  --s2:       #F9F8F5;
+  --s3:       #F0EFE9;
+
+  /* ── Borders ─────────────────────────────────── */
+  --border:        rgba(0, 0, 0, 0.07);
+  --border-strong: rgba(0, 0, 0, 0.13);
+
+  /* ── Brand colours (CareSync) ────────────────── */
+  --accent:   #1B4F8C;   /* CareSync navy */
+  --a2:       #2563EB;   /* CareSync bright blue */
+  --a3:       #60A5FA;   /* soft blue */
+  --teal:     #0D9488;   /* CareSync green-teal */
+  --teal-dim: rgba(13, 148, 136, 0.12);
+
+  /* ── Semantic colours ────────────────────────── */
+  --green:      #059669;
+  --green-dim:  rgba(5, 150, 105, 0.1);
+  --yellow:     #D97706;
+  --yellow-dim: rgba(217, 119, 6, 0.1);
+  --amber:      #F59E0B;
+  --red:        #DC2626;
+  --red-dim:    rgba(220, 38, 38, 0.08);
+  --blue:       #2563EB;
+  --blue-dim:   rgba(37, 99, 235, 0.1);
+
+  /* ── Text ────────────────────────────────────── */
+  --text: #111827;
+  --t2:   #374151;
+  --t3:   #6B7280;
+  --t4:   #9CA3AF;
+
+  /* ── Shadows ─────────────────────────────────── */
+  --shadow-sm:  0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md:  0 4px 12px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.05);
+  --shadow-lg:  0 8px 24px rgba(0,0,0,0.09), 0 2px 6px rgba(0,0,0,0.04);
+  --shadow-xl:  0 20px 48px rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.06);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a { color: inherit; text-decoration: none; }
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.25); }
+
+/* ── Keyframes ──────────────────────────────────── */
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes statusPulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+@keyframes barGrow {
+  from { width: 0%; }
+}
+
+@keyframes floatY {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-5px); }
+}
+
+@keyframes heroReveal {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
