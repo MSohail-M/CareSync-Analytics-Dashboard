@@ -1,0 +1,25 @@
+{
+  "name": "CareSync Analytics",
+  "short_name": "CareSync",
+  "description": "Primary Coastal Care AI Call Analytics Dashboard",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#F4F3EE",
+  "theme_color": "#1B4F8C",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
