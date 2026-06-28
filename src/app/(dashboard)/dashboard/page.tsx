@@ -101,7 +101,7 @@ export default async function DashboardPage() {
   const recent = calls.slice(0, 8)
 
   return (
-    <div style={{ padding: '28px 28px 48px' }}>
+    <div className="page-pad" style={{ padding: '28px 28px 48px' }}>
 
       {/* ── Header ─────────────────────────────── */}
       <div style={{ marginBottom: 26, animation: 'fadeSlideUp 0.45s cubic-bezier(0.32,0.72,0,1) both' }}>
@@ -132,7 +132,7 @@ export default async function DashboardPage() {
 
       {/* ── Bento stat grid ─────────────────────── */}
       {/* Row 1: 4 equal columns */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 14, marginBottom: 14 }}>
+      <div className="stat-grid-4">
         <StatCard label="Calls Today" value={todayCalls.length} sub={`${weekCalls.length} this week`} accent="#1B4F8C" delay="0.06s"
           icon={<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.7 12.03a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.81 1.2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9a16 16 0 0 0 6 6l1.06-1.06a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>}
         />
@@ -148,7 +148,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* ── Second row: Sentiment + Metrics + Quick stats ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 300px', gap: 14, marginBottom: 14 }}>
+      <div className="stat-grid-3">
 
         {/* Patient Sentiment */}
         <div style={{ background: 'white', border: '1px solid rgba(0,0,0,0.07)', borderRadius: 18, padding: '22px 24px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)', animation: 'fadeSlideUp 0.55s cubic-bezier(0.32,0.72,0,1) 0.28s both' }}>

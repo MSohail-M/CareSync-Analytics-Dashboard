@@ -30,7 +30,7 @@ export default async function CallsPage({
   const calls    = filterCalls(allCalls, period, type)
 
   return (
-    <div style={{ padding: '28px 28px 48px' }}>
+    <div className="page-pad" style={{ padding: '28px 28px 48px' }}>
 
       {/* Header */}
       <div style={{ marginBottom: 24, animation: 'fadeSlideUp 0.45s cubic-bezier(0.32,0.72,0,1) both' }}>
