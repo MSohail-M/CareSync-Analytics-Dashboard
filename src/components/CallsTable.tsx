@@ -34,7 +34,7 @@ export function CallsTable({ calls }: { calls: Call[] }) {
   }
 
   return (
-    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+    <table className="calls-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
       <thead>
         <tr style={{ background: '#FAFAF8' }}>
           {['Date & Time', 'Caller', 'Outcome', 'Sentiment', 'Patient', 'Provider', 'Duration', 'Recording', ''].map(h => (
@@ -49,10 +49,10 @@ export function CallsTable({ calls }: { calls: Call[] }) {
       </thead>
       <tbody>
         {calls.map(call => {
-          const outStyle   = call.outcome ? (OUTCOME_STYLE[call.outcome] ?? OUTCOME_STYLE.transferred) : null
-          const sentColor  = call.user_sentiment ? SENTIMENT_COLOR[call.user_sentiment] : undefined
-          const hasAudio   = Boolean(call.recording_url)
-          const isActive   = activePlayer === call.id
+          const outStyle  = call.outcome ? (OUTCOME_STYLE[call.outcome] ?? OUTCOME_STYLE.transferred) : null
+          const sentColor = call.user_sentiment ? SENTIMENT_COLOR[call.user_sentiment] : undefined
+          const hasAudio  = Boolean(call.recording_url)
+          const isActive  = activePlayer === call.id
 
           return (
             <tr key={call.id} style={{
@@ -61,7 +61,7 @@ export function CallsTable({ calls }: { calls: Call[] }) {
               transition: 'background 0.15s',
             }}>
               {/* Date */}
-              <td style={{ padding: '12px 22px' }}>
+              <td className="td-date" style={{ padding: '12px 22px' }}>
                 <div style={{ fontWeight: 600, fontSize: 13, color: '#111827' }}>
                   {call.started_at ? format(new Date(call.started_at), 'MMM d') : '—'}
                 </div>
@@ -71,12 +71,12 @@ export function CallsTable({ calls }: { calls: Call[] }) {
               </td>
 
               {/* Caller */}
-              <td style={{ padding: '12px 22px', fontSize: 13, color: '#374151', fontWeight: 500 }}>
+              <td className="td-caller" style={{ padding: '12px 22px', fontSize: 13, color: '#374151', fontWeight: 500 }}>
                 {call.from_number ?? '—'}
               </td>
 
               {/* Outcome */}
-              <td style={{ padding: '12px 22px' }}>
+              <td className="td-outcome" style={{ padding: '12px 22px' }}>
                 {outStyle
                   ? <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: outStyle.bg, color: outStyle.color, borderRadius: 100, padding: '3px 9px', fontSize: 11, fontWeight: 600, border: `1px solid ${outStyle.border}` }}>
                       <span style={{ width: 5, height: 5, borderRadius: '50%', background: outStyle.dot }} />
@@ -87,27 +87,27 @@ export function CallsTable({ calls }: { calls: Call[] }) {
               </td>
 
               {/* Sentiment */}
-              <td style={{ padding: '12px 22px', fontSize: 13, fontWeight: sentColor ? 600 : 400, color: sentColor ?? '#D1D5DB' }}>
+              <td className="td-sent" style={{ padding: '12px 22px', fontSize: 13, fontWeight: sentColor ? 600 : 400, color: sentColor ?? '#D1D5DB' }}>
                 {call.user_sentiment ?? '—'}
               </td>
 
-              {/* Patient */}
-              <td style={{ padding: '12px 22px', fontSize: 13, color: '#374151' }}>
+              {/* Patient — hidden on mobile */}
+              <td className="td-patient" style={{ padding: '12px 22px', fontSize: 13, color: '#374151' }}>
                 {call.patient_name ?? <span style={{ color: '#D1D5DB' }}>—</span>}
               </td>
 
-              {/* Provider */}
-              <td style={{ padding: '12px 22px', fontSize: 13, color: '#374151' }}>
+              {/* Provider — hidden on mobile */}
+              <td className="td-provider" style={{ padding: '12px 22px', fontSize: 13, color: '#374151' }}>
                 {call.provider_name ?? <span style={{ color: '#D1D5DB' }}>—</span>}
               </td>
 
               {/* Duration */}
-              <td style={{ padding: '12px 22px', fontSize: 13, color: '#6B7280' }}>
+              <td className="td-dur" style={{ padding: '12px 22px', fontSize: 13, color: '#6B7280' }}>
                 {dur(call.duration_seconds)}
               </td>
 
-              {/* Recording — mini player */}
-              <td style={{ padding: '12px 22px', minWidth: hasAudio ? (isActive ? 200 : 48) : 'auto', transition: 'min-width 0.25s cubic-bezier(0.32,0.72,0,1)' }}>
+              {/* Recording */}
+              <td className="td-rec" style={{ padding: '12px 22px', minWidth: hasAudio ? (isActive ? 200 : 48) : 'auto', transition: 'min-width 0.25s cubic-bezier(0.32,0.72,0,1)' }}>
                 {hasAudio
                   ? <MiniPlayer
                       url={call.recording_url!}
@@ -118,8 +118,8 @@ export function CallsTable({ calls }: { calls: Call[] }) {
                 }
               </td>
 
-              {/* View link */}
-              <td style={{ padding: '12px 22px' }}>
+              {/* View */}
+              <td className="td-view" style={{ padding: '12px 22px' }}>
                 <Link href={`/calls/${call.id}`} style={{ fontSize: 12.5, color: '#1B4F8C', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 4, whiteSpace: 'nowrap' }}>
                   View
                   <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">

@@ -139,4 +139,36 @@ a { color: inherit; text-decoration: none; }
   .stat-grid-3 { grid-template-columns: 1fr !important; }
   .page-pad    { padding: 16px 14px 48px !important; }
   .mobile-close-btn { display: flex !important; }
+
+  /* ── Calls table → card layout ───────────────── */
+  .calls-table,
+  .calls-table tbody { display: block; }
+
+  .calls-table thead { display: none; }
+
+  .calls-table tr {
+    display: grid !important;
+    grid-template-areas:
+      "date    date    dur"
+      "caller  caller  caller"
+      "outcome sent    sent"
+      "rec     rec     view";
+    grid-template-columns: auto 1fr auto;
+    padding: 14px 16px !important;
+    border-bottom: 1px solid rgba(0,0,0,0.07) !important;
+    background: white;
+    gap: 5px 10px;
+  }
+
+  .calls-table td { padding: 0 !important; border: none !important; }
+
+  .td-date     { grid-area: date; }
+  .td-caller   { grid-area: caller; font-size: 15px !important; font-weight: 700 !important; color: #111827 !important; }
+  .td-outcome  { grid-area: outcome; display: flex; align-items: center; }
+  .td-sent     { grid-area: sent;    display: flex; align-items: center; }
+  .td-patient  { display: none !important; }
+  .td-provider { display: none !important; }
+  .td-dur      { grid-area: dur; text-align: right; font-size: 12px !important; color: #9CA3AF !important; align-self: start; padding-top: 2px !important; }
+  .td-rec      { grid-area: rec; display: flex; align-items: center; }
+  .td-view     { grid-area: view; display: flex; align-items: center; justify-content: flex-end; }
 }
