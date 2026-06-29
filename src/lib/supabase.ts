@@ -1,6 +1,7 @@
 // Server-only — reads JWT from cookie, uses it as Bearer token for Supabase queries
 import { createClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
+import { unstable_noStore as noStore } from 'next/cache'
 
 export type Clinic = {
   id: string; slug: string; name: string
@@ -30,6 +31,7 @@ function serverClient() {
 }
 
 export async function getClinic(): Promise<Clinic | null> {
+  noStore()
   const sb = serverClient()
   if (!sb) return null
   const { data } = await sb.from('clinics').select('*').maybeSingle()
@@ -37,6 +39,7 @@ export async function getClinic(): Promise<Clinic | null> {
 }
 
 export async function getCalls(limit = 200): Promise<Call[]> {
+  noStore()
   const sb = serverClient()
   if (!sb) return []
   const { data } = await sb.from('calls').select('*')
@@ -45,6 +48,7 @@ export async function getCalls(limit = 200): Promise<Call[]> {
 }
 
 export async function getCall(id: string): Promise<Call | null> {
+  noStore()
   const sb = serverClient()
   if (!sb) return null
   const { data } = await sb.from('calls').select('*')
