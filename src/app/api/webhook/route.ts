@@ -32,8 +32,12 @@ async function resolveClinicId(agentId: string, slug?: string): Promise<string |
     const { data } = await sb.from('clinics').select('id').eq('slug', slug).maybeSingle()
     if (data?.id) return data.id
   }
-  const { data } = await sb.from('clinics').select('id').eq('retell_agent_id', agentId).maybeSingle()
-  return data?.id ?? null
+  // Primary: check clinics table
+  const { data: clinic } = await sb.from('clinics').select('id').eq('retell_agent_id', agentId).maybeSingle()
+  if (clinic?.id) return clinic.id
+  // Fallback: check clinic_agents table (handles Alice, Ava-Test, and any future agents)
+  const { data: agent } = await sb.from('clinic_agents').select('clinic_id').eq('retell_agent_id', agentId).maybeSingle()
+  return agent?.clinic_id ?? null
 }
 
 export async function POST(req: NextRequest) {
