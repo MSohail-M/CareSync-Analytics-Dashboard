@@ -47,6 +47,18 @@ export async function getCalls(limit = 200): Promise<Call[]> {
   return data ?? []
 }
 
+export type AppUser = {
+  id: string; clinic_id: string; role: string; name: string | null; created_at: string
+}
+
+export async function getCurrentUser(): Promise<AppUser | null> {
+  noStore()
+  const sb = serverClient()
+  if (!sb) return null
+  const { data } = await sb.from('users').select('*').maybeSingle()
+  return data ?? null
+}
+
 export async function getCall(id: string): Promise<Call | null> {
   noStore()
   const sb = serverClient()
