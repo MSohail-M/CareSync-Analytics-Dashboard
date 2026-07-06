@@ -30,6 +30,13 @@ function serverClient() {
   )
 }
 
+function serviceClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  )
+}
+
 export async function getClinic(): Promise<Clinic | null> {
   noStore()
   const sb = serverClient()
@@ -38,13 +45,43 @@ export async function getClinic(): Promise<Clinic | null> {
   return data ?? null
 }
 
+async function getAgentIdsByType(type: 'voice' | 'chat'): Promise<string[]> {
+  const clinic = await getClinic()
+  if (!clinic) return []
+  const sb = serviceClient()
+  const { data } = await sb.from('clinic_agents')
+    .select('retell_agent_id')
+    .eq('clinic_id', clinic.id)
+    .eq('type', type)
+  return (data ?? []).map((r: { retell_agent_id: string }) => r.retell_agent_id)
+}
+
 export async function getCalls(limit = 200): Promise<Call[]> {
   noStore()
   const sb = serverClient()
   if (!sb) return []
+  const chatIds = await getAgentIdsByType('chat')
+  let q = sb.from('calls').select('*').order('started_at', { ascending: false }).limit(limit)
+  if (chatIds.length > 0) q = q.not('retell_agent_id', 'in', `(${chatIds.join(',')})`)
+  const { data } = await q
+  return data ?? []
+}
+
+export async function getChats(limit = 200): Promise<Call[]> {
+  noStore()
+  const sb = serverClient()
+  if (!sb) return []
+  const chatIds = await getAgentIdsByType('chat')
+  if (chatIds.length === 0) return []
   const { data } = await sb.from('calls').select('*')
+    .in('retell_agent_id', chatIds)
     .order('started_at', { ascending: false }).limit(limit)
   return data ?? []
+}
+
+export type ClinicAgent = {
+  id: string; clinic_id: string; retell_agent_id: string
+  label: string | null; created_at: string
 }
 
 export type AppUser = {

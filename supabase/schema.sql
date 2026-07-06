@@ -147,6 +147,25 @@ create policy "Dev users see call traces"
   );
 
 -- ============================================================
+-- ============================================================
+-- CLINIC_AGENTS  (multiple agents per clinic — v2 spaces, chat agents, etc.)
+-- ============================================================
+-- The clinics.retell_agent_id column handles the primary/legacy agent.
+-- This table handles additional agents (new spaces, chat widgets, parallel rollouts).
+-- The webhook route checks clinics first, then falls back to this table.
+create table if not exists clinic_agents (
+  id               uuid primary key default uuid_generate_v4(),
+  clinic_id        uuid references clinics(id) on delete cascade not null,
+  retell_agent_id  text unique not null,
+  label            text,
+  created_at       timestamptz default now()
+);
+
+create index if not exists clinic_agents_agent_id_idx on clinic_agents(retell_agent_id);
+
+alter table clinic_agents enable row level security;
+
+-- ============================================================
 -- SEED: first clinic (edit values, then uncomment + run)
 -- ============================================================
 -- insert into clinics (slug, name, retell_agent_id, phone_number, plan_tier)
