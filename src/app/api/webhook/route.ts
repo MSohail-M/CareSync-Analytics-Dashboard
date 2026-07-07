@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
       started_at:           call.start_timestamp ? new Date(call.start_timestamp).toISOString() : null,
       ended_at:             call.end_timestamp   ? new Date(call.end_timestamp).toISOString()   : null,
       duration_seconds:     duration,
-      from_number:          maskPhone(call.from_number),
+      from_number:          call.from_number ?? null,
       call_summary:         analysis.call_summary     ?? null,
       user_sentiment:       analysis.user_sentiment   ?? null,
       call_successful:      analysis.call_successful  ?? null,
