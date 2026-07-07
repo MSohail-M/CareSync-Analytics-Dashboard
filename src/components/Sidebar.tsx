@@ -37,7 +37,7 @@ const NAV = [
   },
 ]
 
-export default function Sidebar({ clinic }: { clinic: Clinic }) {
+export default function Sidebar({ clinic, isDev = false }: { clinic: Clinic; isDev?: boolean }) {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
   const close = () => setOpen(false)
@@ -156,6 +156,37 @@ export default function Sidebar({ clinic }: { clinic: Clinic }) {
             <span style={{ fontSize: 12, fontWeight: 600, color: agentColor }}>{agentLabel}</span>
           </div>
         </div>
+
+        {/* Dev only: Clear Logs */}
+        {isDev && (
+          <div style={{ padding: '0 10px 6px' }}>
+            <button
+              onClick={async () => {
+                if (!window.confirm('Delete ALL call and chat logs from Supabase? This cannot be undone.')) return
+                const res = await fetch('/api/admin/clear-logs', { method: 'POST' })
+                const json = await res.json()
+                if (res.ok) {
+                  alert(`Cleared ${json.deleted ?? 0} log(s).`)
+                  window.location.reload()
+                } else {
+                  alert('Error: ' + (json.error ?? 'unknown'))
+                }
+              }}
+              style={{
+                width: '100%', padding: '8px 12px',
+                background: 'rgba(220,38,38,0.06)', border: '1px solid rgba(220,38,38,0.18)',
+                borderRadius: 10, color: '#DC2626', fontSize: 12, fontWeight: 600,
+                cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 7,
+                transition: 'all 0.18s',
+              }}
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/>
+              </svg>
+              Clear All Logs
+            </button>
+          </div>
+        )}
 
         {/* Sign out */}
         <div style={{ padding: '0 10px 14px' }}>
