@@ -45,7 +45,9 @@ export function AssistantChat() {
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ messages: apiMessages }),
       })
-      const data = await res.json()
+      const text = await res.text()
+      let data: { reply?: string; error?: string }
+      try { data = JSON.parse(text) } catch { throw new Error(`Server error (${res.status}): ${text.slice(0, 200)}`) }
       if (!res.ok) throw new Error(data.error ?? `HTTP ${res.status}`)
       const assistantMsg: Message = { id: crypto.randomUUID(), role: 'assistant', content: data.reply, ts: new Date() }
       setMessages(prev => [...prev, assistantMsg])

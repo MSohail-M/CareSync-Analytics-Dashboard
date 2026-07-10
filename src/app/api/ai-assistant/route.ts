@@ -213,13 +213,14 @@ async function callClaude(messages: unknown[], retries = 3): Promise<unknown> {
 }
 
 export async function POST(req: Request) {
+  try {
   const token = cookies().get('sb-token')?.value
   if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const clinicId = await getClinicId(token)
   if (!clinicId) return NextResponse.json({ error: 'Clinic not found' }, { status: 403 })
 
-  if (!ANTHROPIC_API_KEY) return NextResponse.json({ error: 'ANTHROPIC_API_KEY not configured' }, { status: 500 })
+  if (!ANTHROPIC_API_KEY) return NextResponse.json({ error: 'ANTHROPIC_API_KEY not configured on this server. Add it in Vercel Environment Variables.' }, { status: 500 })
 
   const { messages } = await req.json() as { messages: { role: string; content: unknown }[] }
   if (!messages?.length) return NextResponse.json({ error: 'messages required' }, { status: 400 })
@@ -262,4 +263,9 @@ export async function POST(req: Request) {
   }
 
   return NextResponse.json({ reply: 'Reached max tool-call rounds. Please try a more specific question.' })
+  } catch (e) {
+    console.error('[ai-assistant]', e)
+    const msg = e instanceof Error ? e.message : String(e)
+    return NextResponse.json({ error: msg }, { status: 500 })
+  }
 }
