@@ -37,7 +37,7 @@ export function CallsTable({ calls }: { calls: Call[] }) {
     <table className="calls-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
       <thead>
         <tr style={{ background: '#FAFAF8' }}>
-          {['Date & Time', 'Caller', 'Outcome', 'Sentiment', 'Patient', 'Provider', 'Duration', 'Recording', ''].map(h => (
+          {['Date & Time', 'Caller', 'Outcome', 'Sentiment', 'Duration', 'Recording', ''].map(h => (
             <th key={h} style={{
               textAlign: 'left', padding: '11px 22px',
               fontSize: 10.5, color: '#9CA3AF',
@@ -89,16 +89,6 @@ export function CallsTable({ calls }: { calls: Call[] }) {
               {/* Sentiment */}
               <td className="td-sent" style={{ padding: '12px 22px', fontSize: 13, fontWeight: sentColor ? 600 : 400, color: sentColor ?? '#D1D5DB' }}>
                 {call.user_sentiment ?? '—'}
-              </td>
-
-              {/* Patient — hidden on mobile */}
-              <td className="td-patient" style={{ padding: '12px 22px', fontSize: 13, color: '#374151' }}>
-                {call.patient_name ?? <span style={{ color: '#D1D5DB' }}>—</span>}
-              </td>
-
-              {/* Provider — hidden on mobile */}
-              <td className="td-provider" style={{ padding: '12px 22px', fontSize: 13, color: '#374151' }}>
-                {call.provider_name ?? <span style={{ color: '#D1D5DB' }}>—</span>}
               </td>
 
               {/* Duration */}
