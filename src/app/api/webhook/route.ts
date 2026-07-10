@@ -63,8 +63,8 @@ export async function POST(req: NextRequest) {
     const clinicId = await resolveClinicId(call.agent_id, call.metadata?.clinic_slug)
     const duration = call.duration_ms ? Math.round(call.duration_ms / 1000) : null
 
-    // agent_transfer is a hard fact from Retell — don't rely on LLM analysis for this
-    const isTransfer = call.disconnection_reason === 'agent_transfer'
+    // call_transfer is a hard fact from Retell — don't rely on LLM analysis for this
+    const isTransfer = call.disconnection_reason === 'call_transfer'
     const outcome    = isTransfer ? 'transferred' : (custom.outcome ?? null)
 
     const { error } = await supabase().from('calls').upsert({
@@ -107,8 +107,6 @@ export async function POST(req: NextRequest) {
       call_summary:    analysis.call_summary    ?? null,
       user_sentiment:  analysis.user_sentiment  ?? null,
       call_successful: analysis.call_successful ?? null,
-      patient_name:    custom.patient_name      ?? null,
-      provider_name:   custom.provider_name     ?? null,
       visit_type:      custom.visit_type        ?? null,
     }
     if (custom.outcome) updatePayload.outcome = custom.outcome
