@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { getClinic, getCall } from '@/lib/supabase'
+import { getClinic, getCall, getAdjacentCalls } from '@/lib/supabase'
 import { format } from 'date-fns'
 import { AudioPlayer } from '@/components/AudioPlayer'
 
@@ -32,6 +32,7 @@ export default async function CallDetailPage({ params }: { params: { id: string 
   const call = await getCall(params.id)
   if (!call) redirect('/calls')
 
+  const { prevId, nextId } = await getAdjacentCalls(call.started_at ?? call.created_at)
   const transcript = parseTranscript(call.transcript)
   const outcomeColor = call.outcome ? (OUTCOME_COLOR[call.outcome] ?? '#6B7280') : '#6B7280'
   const outcomeBg    = call.outcome ? (OUTCOME_BG[call.outcome]    ?? 'rgba(107,114,128,0.08)') : 'rgba(107,114,128,0.08)'
@@ -39,11 +40,38 @@ export default async function CallDetailPage({ params }: { params: { id: string 
   return (
     <div style={{ padding: '28px 28px 48px' }}>
 
-      {/* Back */}
-      <Link href="/calls" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#6B7280', marginBottom: 20, fontWeight: 500 }}>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-        Back to Call Logs
-      </Link>
+      {/* Nav bar: back + prev/next */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 22 }}>
+        <Link href="/calls" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#6B7280', fontWeight: 500 }}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          Back to Call Logs
+        </Link>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          {prevId ? (
+            <Link href={`/calls/${prevId}`} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 13, fontWeight: 600, color: '#1B4F8C', background: 'rgba(27,79,140,0.07)', border: '1px solid rgba(27,79,140,0.15)', borderRadius: 8, padding: '7px 13px', textDecoration: 'none' }}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+              Newer
+            </Link>
+          ) : (
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 13, fontWeight: 600, color: '#D1D5DB', background: '#F9FAFB', border: '1px solid #E5E7EB', borderRadius: 8, padding: '7px 13px' }}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+              Newer
+            </span>
+          )}
+          {nextId ? (
+            <Link href={`/calls/${nextId}`} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 13, fontWeight: 600, color: '#1B4F8C', background: 'rgba(27,79,140,0.07)', border: '1px solid rgba(27,79,140,0.15)', borderRadius: 8, padding: '7px 13px', textDecoration: 'none' }}>
+              Older
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </Link>
+          ) : (
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 13, fontWeight: 600, color: '#D1D5DB', background: '#F9FAFB', border: '1px solid #E5E7EB', borderRadius: 8, padding: '7px 13px' }}>
+              Older
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </span>
+          )}
+        </div>
+      </div>
 
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 24, animation: 'fadeSlideUp 0.45s cubic-bezier(0.32,0.72,0,1) both' }}>

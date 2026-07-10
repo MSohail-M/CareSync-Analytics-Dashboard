@@ -104,3 +104,27 @@ export async function getCall(id: string): Promise<Call | null> {
     .or(`id.eq.${id},retell_call_id.eq.${id}`).maybeSingle()
   return data ?? null
 }
+
+export async function getAdjacentCalls(
+  startedAt: string,
+): Promise<{ prevId: string | null; nextId: string | null }> {
+  noStore()
+  const sb = serverClient()
+  if (!sb) return { prevId: null, nextId: null }
+
+  const chatIds = await getAgentIdsByType('chat')
+
+  let prevQ = sb.from('calls').select('id').gt('started_at', startedAt).order('started_at', { ascending: true }).limit(1)
+  let nextQ = sb.from('calls').select('id').lt('started_at', startedAt).order('started_at', { ascending: false }).limit(1)
+  if (chatIds.length > 0) {
+    prevQ = prevQ.not('retell_agent_id', 'in', `(${chatIds.join(',')})`)
+    nextQ = nextQ.not('retell_agent_id', 'in', `(${chatIds.join(',')})`)
+  }
+
+  const [prevRes, nextRes] = await Promise.all([prevQ, nextQ])
+
+  return {
+    prevId: (prevRes.data?.[0]?.id as string) ?? null,
+    nextId: (nextRes.data?.[0]?.id as string) ?? null,
+  }
+}

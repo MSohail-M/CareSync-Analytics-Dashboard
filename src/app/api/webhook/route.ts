@@ -63,6 +63,10 @@ export async function POST(req: NextRequest) {
     const clinicId = await resolveClinicId(call.agent_id, call.metadata?.clinic_slug)
     const duration = call.duration_ms ? Math.round(call.duration_ms / 1000) : null
 
+    // agent_transfer is a hard fact from Retell — don't rely on LLM analysis for this
+    const isTransfer = call.disconnection_reason === 'agent_transfer'
+    const outcome    = isTransfer ? 'transferred' : (custom.outcome ?? null)
+
     const { error } = await supabase().from('calls').upsert({
       clinic_id:            clinicId,
       retell_call_id:       call.call_id,
@@ -76,7 +80,7 @@ export async function POST(req: NextRequest) {
       call_successful:      analysis.call_successful  ?? null,
       in_voicemail:         analysis.in_voicemail     ?? false,
       disconnection_reason: call.disconnection_reason ?? null,
-      outcome:              custom.outcome            ?? null,
+      outcome,
       patient_name:         custom.patient_name       ?? null,
       provider_name:        custom.provider_name      ?? null,
       visit_type:           custom.visit_type         ?? null,
@@ -97,16 +101,20 @@ export async function POST(req: NextRequest) {
     const analysis = call.call_analysis ?? {}
     const custom   = analysis.custom_analysis_data ?? {}
 
+    // Only overwrite outcome from LLM analysis if it has a value — never null-out
+    // a 'transferred' outcome that was correctly set from disconnection_reason.
+    const updatePayload: Record<string, unknown> = {
+      call_summary:    analysis.call_summary    ?? null,
+      user_sentiment:  analysis.user_sentiment  ?? null,
+      call_successful: analysis.call_successful ?? null,
+      patient_name:    custom.patient_name      ?? null,
+      provider_name:   custom.provider_name     ?? null,
+      visit_type:      custom.visit_type        ?? null,
+    }
+    if (custom.outcome) updatePayload.outcome = custom.outcome
+
     const { error } = await supabase().from('calls')
-      .update({
-        call_summary:    analysis.call_summary    ?? null,
-        user_sentiment:  analysis.user_sentiment  ?? null,
-        call_successful: analysis.call_successful ?? null,
-        outcome:         custom.outcome           ?? null,
-        patient_name:    custom.patient_name      ?? null,
-        provider_name:   custom.provider_name     ?? null,
-        visit_type:      custom.visit_type        ?? null,
-      })
+      .update(updatePayload)
       .eq('retell_call_id', call.call_id)
 
     if (error) {
