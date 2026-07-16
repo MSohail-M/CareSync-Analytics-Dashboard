@@ -32,7 +32,7 @@ export default async function CallDetailPage({ params }: { params: { id: string 
   const call = await getCall(params.id)
   if (!call) redirect('/calls')
 
-  const { prevId, nextId } = await getAdjacentCalls(call.started_at ?? call.created_at)
+  const { prevId, nextId } = await getAdjacentCalls(call.started_at ?? call.created_at, clinic.id)
   const transcript = parseTranscript(call.transcript)
   const outcomeColor = call.outcome ? (OUTCOME_COLOR[call.outcome] ?? '#6B7280') : '#6B7280'
   const outcomeBg    = call.outcome ? (OUTCOME_BG[call.outcome]    ?? 'rgba(107,114,128,0.08)') : 'rgba(107,114,128,0.08)'

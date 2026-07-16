@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { getClinic, getCalls } from '@/lib/supabase'
 import { format, formatDistanceToNow, startOfDay, startOfWeek, startOfMonth } from 'date-fns'
-import type { Call } from '@/lib/supabase'
+import type { CallListItem } from '@/lib/supabase'
 
 /* ── Outcome / Sentiment maps ───────────────────── */
 const OUTCOME_STYLE: Record<string, { bg: string; color: string; dot: string; border: string }> = {
@@ -73,10 +73,10 @@ export default async function DashboardPage() {
   const clinic = await getClinic()
   if (!clinic) redirect('/login')
 
-  const calls = await getCalls(500)
+  const calls = await getCalls(500, clinic.id)
   const now   = new Date()
 
-  const inPeriod = (c: Call, from: Date) => c.started_at ? new Date(c.started_at) >= from : false
+  const inPeriod = (c: CallListItem, from: Date) => c.started_at ? new Date(c.started_at) >= from : false
   const todayCalls  = calls.filter(c => inPeriod(c, startOfDay(now)))
   const weekCalls   = calls.filter(c => inPeriod(c, startOfWeek(now)))
   const monthCalls  = calls.filter(c => inPeriod(c, startOfMonth(now)))

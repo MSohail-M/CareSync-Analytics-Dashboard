@@ -3,7 +3,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { format } from 'date-fns'
 import { MiniPlayer } from '@/components/AudioPlayer'
-import type { Call } from '@/lib/supabase'
+import type { CallListItem } from '@/lib/supabase'
 
 const OUTCOME_STYLE: Record<string, { bg: string; color: string; dot: string; border: string }> = {
   booked:      { bg: 'rgba(5,150,105,0.08)',   color: '#059669', dot: '#059669', border: 'rgba(5,150,105,0.18)' },
@@ -22,7 +22,7 @@ function dur(s: number | null) {
   return `${Math.floor(s / 60)}m ${s % 60}s`
 }
 
-export function CallsTable({ calls }: { calls: Call[] }) {
+export function CallsTable({ calls }: { calls: CallListItem[] }) {
   const [activePlayer, setActivePlayer] = useState<string | null>(null)
 
   if (calls.length === 0) {

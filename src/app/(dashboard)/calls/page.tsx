@@ -4,9 +4,9 @@ import { getClinic, getCalls } from '@/lib/supabase'
 import { startOfDay, startOfWeek, startOfMonth } from 'date-fns'
 import { CallsFilterBar } from '@/components/CallsFilterBar'
 import { CallsTable } from '@/components/CallsTable'
-import type { Call } from '@/lib/supabase'
+import type { CallListItem } from '@/lib/supabase'
 
-function filterCalls(calls: Call[], period: string, type: string): Call[] {
+function filterCalls(calls: CallListItem[], period: string, type: string): CallListItem[] {
   const now = new Date()
   let result = calls
   if (period === 'today') result = result.filter(c => c.started_at && new Date(c.started_at) >= startOfDay(now))
@@ -26,7 +26,7 @@ export default async function CallsPage({
   if (!clinic) redirect('/login')
 
   const { period = 'all', type = 'all' } = await searchParams
-  const allCalls = await getCalls(500)
+  const allCalls = await getCalls(500, clinic.id)
   const calls    = filterCalls(allCalls, period, type)
 
   return (

@@ -3,9 +3,9 @@ import { Suspense } from 'react'
 import { getClinic, getChats } from '@/lib/supabase'
 import { startOfDay, startOfWeek, startOfMonth } from 'date-fns'
 import { CallsTable } from '@/components/CallsTable'
-import type { Call } from '@/lib/supabase'
+import type { CallListItem } from '@/lib/supabase'
 
-function filterChats(chats: Call[], period: string): Call[] {
+function filterChats(chats: CallListItem[], period: string): CallListItem[] {
   const now = new Date()
   if (period === 'today') return chats.filter(c => c.started_at && new Date(c.started_at) >= startOfDay(now))
   if (period === 'week')  return chats.filter(c => c.started_at && new Date(c.started_at) >= startOfWeek(now))
@@ -29,7 +29,7 @@ export default async function ChatsPage({
   if (!clinic) redirect('/login')
 
   const { period = 'all' } = await searchParams
-  const allChats = await getChats(500)
+  const allChats = await getChats(500, clinic.id)
   const chats    = filterChats(allChats, period)
 
   return (
@@ -99,7 +99,7 @@ function ChatsFilterBar({ total, period }: { total: number; period: string }) {
   )
 }
 
-function ChatsTable({ chats }: { chats: Call[] }) {
+function ChatsTable({ chats }: { chats: CallListItem[] }) {
   if (chats.length === 0) {
     return (
       <div style={{ padding: 48, textAlign: 'center' }}>
