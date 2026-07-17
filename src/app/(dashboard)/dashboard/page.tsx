@@ -1,7 +1,8 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { getClinic, getCalls } from '@/lib/supabase'
-import { format, formatDistanceToNow, startOfDay, startOfWeek, startOfMonth } from 'date-fns'
+import { formatDistanceToNow, startOfDay, startOfWeek, startOfMonth } from 'date-fns'
+import { CLINIC_TZ } from '@/lib/dates'
 import type { CallListItem } from '@/lib/supabase'
 
 /* ── Outcome / Sentiment maps ───────────────────── */
@@ -88,9 +89,9 @@ export default async function DashboardPage() {
   const successRate = monthCalls.length > 0 ? Math.round((successful / monthCalls.length) * 100) : 0
   const transferRate = monthCalls.length > 0 ? Math.round((transferred / monthCalls.length) * 100) : 0
 
-  const avgDur = monthCalls.length > 0
-    ? Math.round(monthCalls.reduce((a, c) => a + (c.duration_seconds ?? 0), 0) / monthCalls.length)
-    : 0
+  const monthSeconds = monthCalls.reduce((a, c) => a + (c.duration_seconds ?? 0), 0)
+  const monthMinutes = Math.round(monthSeconds / 60)
+  const avgDur = monthCalls.length > 0 ? Math.round(monthSeconds / monthCalls.length) : 0
 
   const sentimentCounts = { Positive: 0, Neutral: 0, Negative: 0 }
   monthCalls.forEach(c => {
@@ -111,7 +112,7 @@ export default async function DashboardPage() {
               Welcome, {clinic.name}
             </h1>
             <p style={{ fontSize: 13, color: '#9CA3AF', marginTop: 3 }}>
-              {format(now, 'EEEE, MMMM d yyyy')} · Call Analytics Overview
+              {now.toLocaleDateString('en-US', { timeZone: CLINIC_TZ, weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })} · Call Analytics Overview
             </p>
           </div>
           {/* Agent pill */}
@@ -200,6 +201,7 @@ export default async function DashboardPage() {
             { label: 'Today', value: todayCalls.length, color: '#1B4F8C', sub: 'calls' },
             { label: 'This Week', value: weekCalls.length, color: '#0D9488', sub: 'calls' },
             { label: 'This Month', value: monthCalls.length, color: '#D97706', sub: 'calls' },
+            { label: 'AI Talk Time', value: monthMinutes, color: '#7C3AED', sub: 'minutes this month' },
           ].map((h, i) => (
             <div key={h.label} style={{
               background: 'white', border: '1px solid rgba(0,0,0,0.07)',

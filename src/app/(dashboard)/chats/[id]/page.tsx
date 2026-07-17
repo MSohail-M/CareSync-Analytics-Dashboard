@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 import { getClinic, getCall } from '@/lib/supabase'
-import { format } from 'date-fns'
+import { fmtDateTimeET } from '@/lib/dates'
 import { AudioPlayer } from '@/components/AudioPlayer'
 
 const OUTCOME_COLOR: Record<string, string> = {
@@ -53,7 +53,7 @@ export default async function ChatDetailPage({ params }: { params: { id: string 
           <div>
             <h1 style={{ fontSize: 22, fontWeight: 800, color: '#111827', letterSpacing: '-0.025em' }}>Chat Detail</h1>
             <p style={{ fontSize: 13, color: '#9CA3AF', marginTop: 2 }}>
-              {chat.started_at ? format(new Date(chat.started_at), 'PPP · p') : '—'}
+              {chat.started_at ? fmtDateTimeET(chat.started_at) : '—'}
             </p>
           </div>
         </div>

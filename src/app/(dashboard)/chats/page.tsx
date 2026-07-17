@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 import { Suspense } from 'react'
 import { getClinic, getChats } from '@/lib/supabase'
 import { startOfDay, startOfWeek, startOfMonth } from 'date-fns'
-import { CallsTable } from '@/components/CallsTable'
+import { CLINIC_TZ } from '@/lib/dates'
 import type { CallListItem } from '@/lib/supabase'
 
 function filterChats(chats: CallListItem[], period: string): CallListItem[] {
@@ -151,10 +151,10 @@ function ChatsTable({ chats }: { chats: CallListItem[] }) {
               {/* Date */}
               <td style={{ padding: '12px 22px', whiteSpace: 'nowrap' }}>
                 <div style={{ fontWeight: 600, fontSize: 13, color: '#111827' }}>
-                  {chat.started_at ? new Date(chat.started_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '—'}
+                  {chat.started_at ? new Date(chat.started_at).toLocaleDateString('en-US', { timeZone: CLINIC_TZ, month: 'short', day: 'numeric' }) : '—'}
                 </div>
                 <div style={{ fontSize: 11, color: '#9CA3AF' }}>
-                  {chat.started_at ? new Date(chat.started_at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : ''}
+                  {chat.started_at ? new Date(chat.started_at).toLocaleTimeString('en-US', { timeZone: CLINIC_TZ, hour: 'numeric', minute: '2-digit' }) : ''}
                 </div>
               </td>
 

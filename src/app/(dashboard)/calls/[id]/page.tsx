@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { getClinic, getCall, getAdjacentCalls } from '@/lib/supabase'
-import { format } from 'date-fns'
+import { fmtDateTimeET } from '@/lib/dates'
 import { AudioPlayer } from '@/components/AudioPlayer'
 
 function dur(s: number | null) { if (!s) return '—'; return `${Math.floor(s/60)}m ${s%60}s` }
@@ -78,7 +78,7 @@ export default async function CallDetailPage({ params }: { params: { id: string 
         <div>
           <h1 style={{ fontSize: 22, fontWeight: 800, color: '#111827', letterSpacing: '-0.025em' }}>Call Detail</h1>
           <p style={{ fontSize: 13, color: '#9CA3AF', marginTop: 3 }}>
-            {call.started_at ? format(new Date(call.started_at),'PPP · p') : '—'} · {dur(call.duration_seconds)}
+            {call.started_at ? fmtDateTimeET(call.started_at) : '—'} · {dur(call.duration_seconds)}
           </p>
         </div>
         {/* Recording badge (pill) */}
